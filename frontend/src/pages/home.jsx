@@ -8,6 +8,7 @@ const socket = io("http://localhost:3000")
 
 export default function Home() {
     
+    
     let { getUser, getChat } = useStore()
 
     let [users, setUsers] = useState([])
