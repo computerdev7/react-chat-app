@@ -10,8 +10,8 @@ route.get('/getChat',async(req,res)=> {
     console.log(to,from)
 
     try{
-        let data = await chat.find({to : to,from : from})
-        let data1 = await chat.find({to : from,from : to})
+        let data = await chat.find({to : to,from : from}).sort({createdAt : 1})
+        let data1 = await chat.find({to : from,from : to}).sort({createdAt : 1})
         res.status(200).json({message : data,data1})
     }catch(err){
         res.status(500).json({message : err.message})

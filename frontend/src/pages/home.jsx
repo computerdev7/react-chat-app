@@ -3,12 +3,12 @@ import { io } from "socket.io-client"
 import { useNavigate } from "react-router-dom"
 import useStore from "../store.jsx"
 import Chat from "../component/chat.jsx"
+import '../Index.css'
 
 const socket = io("http://localhost:3000")
 
 export default function Home() {
-    
-    
+
     let { getUser, getChat } = useStore()
 
     let [users, setUsers] = useState([])
@@ -34,11 +34,11 @@ export default function Home() {
         socket.emit('userjoined', userName)
 
         socket.on('users', (users) => {
-            
+
         })
 
-        socket.on('message', ({ from, to,message }) => {
-            setPrintChat(prev => [...prev, { from, to ,message }])
+        socket.on('message', ({ from, to, message }) => {
+            setPrintChat(prev => [...prev, { from, to, message }])
         })
 
     }, [])
@@ -57,13 +57,13 @@ export default function Home() {
         return (
             <button key={i} onClick={() => {
                 setRecieverUser(el.username)
-                if (!(hasRun.current[el.username])) { 
-                    getChat(el.username,userName)
-                    .then(res=> {
-                        setPrintChat('')
-                        setPrintChat(prev=> [...prev,...res.data.message])
-                        setPrintChat(prev=> [...prev,...res.data.data1])
-                    })
+                if (!(hasRun.current[el.username])) {
+                    getChat(el.username, userName)
+                        .then(res => {
+                            setPrintChat('')
+                            setPrintChat(prev => [...prev, ...res.data.message])
+                            setPrintChat(prev => [...prev, ...res.data.data1])
+                        })
                     hasRun.current[el.username] = 1
                 }
             }}>{el.username}</button>
@@ -72,17 +72,17 @@ export default function Home() {
 
     let renderChat = printChat.map((el) => {
 
-        if(recieverUser == el.to && userName != recieverUser){
+        if (recieverUser == el.to && userName != recieverUser) {
             return (
-                <li> sent to "{el.to}" {el.message||el.chat}</li>
+                <li> sent to "{el.to}" {el.message || el.chat}</li>
             )
-        } else if(recieverUser == el.from && userName != recieverUser){
-             return (
-                <li>sent from "{el.from}" {el.message||el.chat}</li>
+        } else if (recieverUser == el.from && userName != recieverUser) {
+            return (
+                <li>sent from "{el.from}" {el.message || el.chat}</li>
             )
         }
     })
-    
+
     return (
         <>
             <h1>{recieverUser}</h1>
