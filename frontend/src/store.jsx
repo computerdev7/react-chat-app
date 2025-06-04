@@ -1,20 +1,20 @@
 import {create} from "zustand"
 import axios from "axios"
+import Alert from "./component/alert.jsx"
 
-
-const useStore = create((set)=> ({
+const useStore = create((set,get)=> ({
     signIn : async(password,confirmPassword)=> {
-        try {
-                        
+
+        try {  
             if(password === confirmPassword){
                 let data = await axios.post("http://localhost:3000/user/signin",{username : password})
-                console.log(data)
+                return data
             } else {
-                alert('usernames do not match with the confirm_username')
+                console.log('not matched users')
             }
 
         }catch(err){
-            console.log(err,'error while signup ')
+            console.log(err.message,'error while singing up')
         }
     },
     logIn : async(password)=> {
@@ -24,7 +24,7 @@ const useStore = create((set)=> ({
                 return data
             
         }catch(err){
-            console.log(err,'error while login ')
+            console.log(err.message,'error while login ')
         }
     },
     getUser : async()=> {
@@ -32,7 +32,7 @@ const useStore = create((set)=> ({
            let data = await axios.get('http://localhost:3000/user/getUsers')
            return data
         }catch(err){
-            console.log('error while fetching the users list')
+            console.log(err.message,'error while fetching the users list')
         }
     },
     userName : '',
@@ -50,7 +50,7 @@ const useStore = create((set)=> ({
             let data = await axios.delete('http://localhost:3000/chat/deleteChat',{data: {id : id}})
             return data
         }catch(err){
-            console.log(err)
+            console.log(err.message)
         }
     },
     updateChat : async(id,data)=> {
@@ -58,7 +58,7 @@ const useStore = create((set)=> ({
             let updateChat = await axios.put('http://localhost:3000/chat/updateChat',{id,data})
             return updateChat
         }catch(err){
-            console.log(err)
+            console.log(err.message)
         }
     }
 }))
