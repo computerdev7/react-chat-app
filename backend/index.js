@@ -53,16 +53,13 @@ io.on('connection',(socket) => {
 
        let saveData = await data.save()
 
-       console.log(saveData)
+       io.to(socket.id).emit('message',({from : sender ,to : to, message,_id : saveData._id}))
+       io.to(reciever).emit('message',({from : sender ,to : to, message, _id : saveData._id}))  
 
       }catch(err){
        console.log(err)
       }
-      
-          io.to(socket.id).emit('message',({from : sender ,to : to, message}))
-          io.to(reciever).emit('message',({from : sender ,to : to, message}))  
-      
-
+        
        })
 
        socket.on("disconnect",()=> {

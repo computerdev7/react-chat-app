@@ -16,9 +16,9 @@ export default function Entry(){
     
     return (
         <>
-        <div className="h-screen flex justify-center items-center sm:items-start pt-10 bg-red-400">
-        <div className=" max-[400px]:h-4/6 sm:h-5/6 max-[400px]:w-5/6  max-[645px]:w-4/6 sm:w-2/4 lg:w-2/5 xl:w-1/3 text-center flex flex-col gap-5 sm:gap-7 bg-orange-100 
-         sm:p-5">
+        <div className="h-screen flex justify-center items-center pt-10 bg-red-500">
+        <div className=" h-[550px] sm:h-5/6 md:h-[550px] xl:h-[600px] w-[280px] sm:w-2/4 lg:w-2/5 xl:w-1/3 text-center flex flex-col gap-5 sm:gap-7 bg-orange-100 
+        p-2 sm:p-5 shadow-inner ); ">
         <h1 className="text-2xl sm:text-3xl xl:text-4xl font-bold mt-5 sm:mt-0"
         >Just-Chat</h1>
         <form className="flex flex-col items-center">

@@ -43,6 +43,23 @@ const useStore = create((set)=> ({
         } catch(err){
             console.log(err.message)
         }
+    },
+    deleteChat : async(id)=> {
+        
+        try{
+            let data = await axios.delete('http://localhost:3000/chat/deleteChat',{data: {id : id}})
+            return data
+        }catch(err){
+            console.log(err)
+        }
+    },
+    updateChat : async(id,data)=> {
+        try{
+            let updateChat = await axios.put('http://localhost:3000/chat/updateChat',{id,data})
+            return updateChat
+        }catch(err){
+            console.log(err)
+        }
     }
 }))
 
