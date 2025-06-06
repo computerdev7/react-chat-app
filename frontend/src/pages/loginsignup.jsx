@@ -13,8 +13,6 @@ export default function Entry() {
     let { signIn, logIn } = useStore();
     let [showAlertSign, setShowAlertSign] = useState(false);
     let [showSignIn, setShowSignIn] = useState(false);
-    
-    // continue from designin alert
 
     return (
         <>
@@ -39,6 +37,8 @@ export default function Entry() {
                                 e.preventDefault();
                                 signIn(username, confirmusername)
                                     .then(res => {
+                                        setUsername('');
+                                        setConfirmUsername('')
                                         if (res == undefined) {
                                             setShowAlertSign(true)
                                             setTimeout(() => {
@@ -54,8 +54,8 @@ export default function Entry() {
                                         }
                                     })
                             }}>Signup</button>
-                        {showAlertSign && <Alert data={'please put the valid detail into input box'} />}
-                        {showSignIn && <Alert data={'successfully signin'} />}
+                        {showAlertSign && <Alert data={'invlaid details'} color={' bg-red-500'} />}
+                        {showSignIn && <Alert data={'successfully signin'} color={' bg-green-500'} />}
                         <h1 className="text-red-500 mt-5 mb-5 font-bold text-xl">OR</h1>
                         <h1 className="mb-3 text-xl sm:text-2xl xl:text-3xl" inline>LOGIN</h1>
                         <h5 className="text-left font-light inline text-gray-400">username</h5>
@@ -67,6 +67,7 @@ export default function Entry() {
                                     e.preventDefault();
                                     logIn(loginUser)
                                         .then(res => {
+                                            setLoginUser('')
                                             if (res == undefined) {
                                                 setShowAlertSign(true)
                                                 setTimeout(() => {

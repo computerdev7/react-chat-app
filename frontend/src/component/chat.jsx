@@ -50,11 +50,38 @@ export default function Chat({ printChat, userName, recieverUser, setPrintChat }
         deleteChat(chatValue)
     }
 
-    function funcAlert(){
+    function funcAlert() {
+        setToggleUpdate(false)
         setToggleAlert(false)
     }
 
     let renderChat = printChat.map((el) => {
+        return el
+    })
+
+    let arr1 = renderChat.filter((e) => {
+        if (e._id) {
+            return e
+        }
+    })
+
+    let arr2 = renderChat.filter((e) => {
+        if (e.id) {
+            return e
+        }
+    })
+
+    arr1.map((el) => {
+        for (let i = 0; i < arr2.length; i++) {
+            if (el._id == arr2[i].id) {
+                arr2 = arr2.filter(e => el._id != e.id)
+            }
+        }
+    })
+
+    let arr3 = [...arr1, ...arr2]
+
+    let newRenderChat = arr3.map((el) => {
         if (recieverUser == el.to && userName != recieverUser) {
             return (
                 <div className="flex " ref={lastMessage}>
@@ -62,33 +89,38 @@ export default function Chat({ printChat, userName, recieverUser, setPrintChat }
                         setToggleAlert(true)
                         setChatValue(el._id ? el._id : el.id)
                         setUpdateChatValue(el.message || el.chat)
-                    }} className="bg-slate-200 w-fit p-1 rounded-lg">sent to "{el.to}" {el.message || el.chat}</p>
+                    }} className="bg-stone-950 text-white w-fit shadow-lg border border-gray-400 p-1 rounded-lg">sent to "{el.to}" {el.message || el.chat}</p>
                 </div>
+
             )
         } else if (recieverUser == el.from && userName != recieverUser) {
             return (
                 <div className="flex flex-row-reverse  " ref={lastMessage}>
                     <p onClick={() => {
-                    }} className="bg-slate-400 w-fit text-right p-1 rounded-lg">sent from "{el.from}" {el.message || el.chat}</p>
+                    }} className="bg-stone-800 text-white shadow-lg border border-gray-500 w-fit text-right p-1 rounded-lg">sent from "{el.from}" {el.message || el.chat}</p>
                 </div>
+
             )
         }
     })
 
+
     return (
         <>
             <div className="w-full h-full flex flex-col gap-1 p-1 pt-16">
-                {renderChat}
+                {newRenderChat}
                 {toggleAlert
                     &&
-                    <div className='fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2  h-24 w-56 bg-slate-500 rounded-xl p-2 text-sm'>
+                    <div className='fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2  h-24 w-56 bg-red-500 rounded-xl p-2 text-sm shadow-alert-inner-shadow'>
                         {toggleUpdate ?
                             <div className="flex flex-col h-full w-full">
-                                <input className="p-1"
+                                <input className="p-1 rounded-lg"
                                     type="text" value={updateChatValue} onChange={(e) => setUpdateChatValue(e.target.value)} />
                                 <div className="flex flex-row h-2/3 items-center justify-around ">
-                                    <button onClick={funcUpdateConfirmChat}>CONFIRM</button>
-                                    <button onClick={funcAlert}> CANCEL
+                                    <button className="h-8 w-20 border rounded-lg bg-black text-white hover:bg-red-700 hover:text-stone-900 active:bg-red-900 active:text-white"
+                                        onClick={funcUpdateConfirmChat}>CONFIRM</button>
+                                    <button className="h-8 w-20 border rounded-lg bg-black text-white hover:bg-red-700 hover:text-stone-900 active:bg-red-900 active:text-white"
+                                        onClick={funcAlert}> CANCEL
                                     </button>
                                 </div>
                             </div>
@@ -99,10 +131,12 @@ export default function Chat({ printChat, userName, recieverUser, setPrintChat }
                                     <button className='mb-7' onClick={funcAlert}>X</button>
                                 </div>
                                 <div className="w-full flex items-center justify-around h-1/3">
-                                    <button onClick={() => {
-                                        setToggleUpdate(true)
-                                    }}>UPDATE</button>
-                                    <button onClick={funcDeleteChat}>DELETE</button>
+                                    <button className="h-8 w-20 border rounded-lg bg-black text-white hover:bg-red-700 hover:text-stone-900 active:bg-red-900 active:text-white"
+                                        onClick={() => {
+                                            setToggleUpdate(true);
+                                        }}>UPDATE</button>
+                                    <button className="h-8 w-20 border rounded-lg bg-black text-white hover:bg-red-700 hover:text-stone-900 active:bg-red-900 active:text-white"
+                                        onClick={funcDeleteChat}>DELETE</button>
                                 </div>
                             </div>
                         }
