@@ -66,4 +66,19 @@ route.get('/getUsers',async(req,res)=> {
     }
 })
 
+route.put('/updateUser',async(req,res)=> {
+
+    let id = req.body.id
+    let name = req.body.name
+    let bio = req.body.bio
+    console.log(id,name,bio)
+
+    try{
+        let data = await user.findOneAndUpdate({_id : id},{$set :{ name : name,bio : bio}},{new : true})
+        res.status(200).json({message: data })
+    }catch(err){
+        res.status(500).json({message : err.message})
+    }
+})
+
 export default route

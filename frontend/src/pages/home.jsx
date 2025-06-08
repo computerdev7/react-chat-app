@@ -6,6 +6,9 @@ import Chat from "../component/chat.jsx"
 import '../Index.css'
 import { IoMdArrowRoundBack } from "react-icons/io";
 import Alert from "../component/alert.jsx"
+import ToolTip from "../component/tooltip.jsx"
+import { FaRegUser } from "react-icons/fa";
+
 
 const socket = io("http://localhost:3000")
 
@@ -67,9 +70,9 @@ export default function Home() {
             return 
         } else {
             return (    
-                <button className=" w-full h-16 text-left pl-5 bg-stone-900  text-white  hover:text-red-500  shadow-user-inner-shadow active:bg-stone-700"
+                <div className=" w-full h-16 text-left p-5 bg-stone-900  text-white  hover:text-red-500  shadow-user-inner-shadow active:bg-stone-700"
                     key={i} onClick={() => {
-    
+                        
                         if (showFull) {
                             undefined
                         } else if (!showFull) {
@@ -89,12 +92,24 @@ export default function Home() {
                                 })
                             hasRun.current[el.username] = 1
                         }
-                    }}>{el.username}</button>
+                    }}>
+                    <button className="group"
+                    onClick={()=> {
+                        navigate('/profile',{state : {el : el}})
+                    }}
+                    > {el.username}
+                    <ToolTip data={'Visit Profile'} />
+                    </button>
+                    </div>
             )
         }
     })
 
-    
+    console.log(users)
+
+    let userProfile = users.filter(e=> e.username === userName)
+
+    console.log(userProfile)
 
     return (
         <>
@@ -104,8 +119,13 @@ export default function Home() {
                 {toggle ?
                     <>
                         <div className="max-h-screen max-[450px]:w-full min:[450px]:w-1/2 max-[638px]:w-1/2 sm:w-2/5 xl:w-1/3 bg-stone-950 overflow-y-scroll sticky top-0">
-                            <div className="h-16 flex items-center justify-start p-2 bg-red-500 shadow-black drop-shadow-2xl border-b border-red-400">
+                            <div className="h-16 flex items-center justify-between p-2 bg-red-500 shadow-black drop-shadow-2xl border-b border-red-400">
                                 <p className="text-[30px] font-bold text-stone-800" >Connect to </p>
+                                <button className="text-xl font-bold text-stone-800 hover:bg-red-400 h-[30px] w-[30px] rounded-lg flex justify-center items-center" 
+                                onClick={()=> {
+                                    navigate('/profile',{state : {el : userProfile[0]}})
+                                }}
+                                ><FaRegUser /></button>
                             </div>
                             {renderUsers}
                         </div>

@@ -60,6 +60,18 @@ const useStore = create((set,get)=> ({
         }catch(err){
             console.log(err.message)
         }
+    },
+    updateProfile : async(id,name,bio)=> {
+        try{
+            let updateProfile = await axios.put('http://localhost:3000/user/updateUser',{
+                id,
+                name : name,
+                bio : bio
+            })
+            return updateProfile
+        }catch(err){
+            console.log(err.message)
+        }
     }
 }))
 
