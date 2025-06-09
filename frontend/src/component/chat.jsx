@@ -29,9 +29,9 @@ export default function Chat({ printChat, userName, recieverUser, setPrintChat }
         setToggleAlert(false)
         setPrintChat((prev) => {
             return prev.map((el) => {
-                if (el._id === chatValue && el.message) {
+                if (el.id === chatValue) {
                     return { ...el, message: updateChatValue }
-                } else if (el._id === chatValue && el.chat) {
+                } else if (el._id === chatValue ) {
                     return { ...el, chat: updateChatValue }
                 } else {
                     return el
@@ -41,14 +41,24 @@ export default function Chat({ printChat, userName, recieverUser, setPrintChat }
         updateChat(chatValue, updateChatValue)
     }
 
+    console.log(printChat)
+
     function funcDeleteChat() {
         setToggleAlert(false)
+        console.log()
         setPrintChat((prev) => {
-            let checkFind = prev.filter((el) => (el._id != chatValue))
+            let checkFind = prev?.filter((el) => {
+           if(el._id){
+            return el._id != chatValue
+           } else if(el.id) {
+            return el.id != chatValue
+           }
+        })
             return [...checkFind]
         })
         deleteChat(chatValue)
     }
+
 
     function funcAlert() {
         setToggleUpdate(false)
@@ -59,25 +69,29 @@ export default function Chat({ printChat, userName, recieverUser, setPrintChat }
         return el
     })
 
-    let arr1 = renderChat.filter((e) => {
-        if (e._id) {
-            return e
-        }
-    })
+    let arr1;
+    let arr2;
 
-    let arr2 = renderChat.filter((e) => {
-        if (e.id) {
-            return e
-        }
-    })
+        arr1 = renderChat?.filter((e) => {
+           if (e._id) {
+               return e
+           }
+       })
+   
+        arr2 = renderChat?.filter((e) => {
+           if (e.id) {
+               return e
+           }
+       })
+   
+       arr1.map((el) => {
+           for (let i = 0; i < arr2.length; i++) {
+               if (el._id == arr2[i].id) {
+                   arr2 = arr2?.filter(e => el._id != e.id)
+               }
+           }
+       })
 
-    arr1.map((el) => {
-        for (let i = 0; i < arr2.length; i++) {
-            if (el._id == arr2[i].id) {
-                arr2 = arr2.filter(e => el._id != e.id)
-            }
-        }
-    })
 
     let arr3 = [...arr1, ...arr2]
 

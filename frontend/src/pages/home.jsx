@@ -8,13 +8,14 @@ import { IoMdArrowRoundBack } from "react-icons/io";
 import Alert from "../component/alert.jsx"
 import ToolTip from "../component/tooltip.jsx"
 import { FaRegUser } from "react-icons/fa";
-
+import { RiLoginBoxLine } from "react-icons/ri";
+import RenderUser from "../component/RenderUser.jsx"
 
 const socket = io("http://localhost:3000")
 
 export default function Home() {
 
-    let { getUser, getChat } = useStore()
+    let { getUser } = useStore()
     let [users, setUsers] = useState([])
     let navigate = useNavigate()
     let userName = sessionStorage.getItem("username")
@@ -23,8 +24,8 @@ export default function Home() {
     let [message, setMessage] = useState('')
     let [recieverUser, setRecieverUser] = useState('')
     let [showFull, setShowFull] = useState(false)
-    let [showUserAlert,setShowUserAlert] = useState(false)
-    let [showChatAlert,setShowChatAlert] = useState(false)
+    let [showUserAlert, setShowUserAlert] = useState(false)
+    let [showChatAlert, setShowChatAlert] = useState(false)
     let w = window.innerWidth;
 
     if (!userName) {
@@ -43,10 +44,7 @@ export default function Home() {
 
         socket.emit('userjoined', userName)
 
-        socket.on('users', (users) => { })
-
         socket.on('message', ({ from, to, message, _id }) => {
-            console.log(from, to, message, _id)
             setPrintChat(prev => [...prev, { from, to, message, id : _id }])
         })
 
@@ -55,7 +53,7 @@ export default function Home() {
     useEffect(() => {
         getUser()
             .then(res => {
-                if(res == undefined){
+                if (res == undefined) {
                     setShowUserAlert(true)
                 } else {
                     setUsers(res.data.message)
@@ -63,71 +61,47 @@ export default function Home() {
             })
     }, [])
 
+    let userProfile;
 
-
-    let renderUsers = users.map((el, i) => {
-        if(el.username==userName){
-            return 
-        } else {
-            return (    
-                <div className=" w-full h-16 text-left p-5 bg-stone-900  text-white  hover:text-red-500  shadow-user-inner-shadow active:bg-stone-700"
-                    key={i} onClick={() => {
-                        
-                        if (showFull) {
-                            undefined
-                        } else if (!showFull) {
-                            setToggle(false)
-                        }
-    
-                        setRecieverUser(el.username)
-    
-                        if (!(hasRun.current[el.username])) {
-                            getChat(el.username, userName)
-                                .then(res => {
-                                    if(res==undefined){
-                                        setShowChatAlert(true)
-                                    } else {
-                                        setPrintChat(prev => [...prev, ...res.data.message])
-                                    }
-                                })
-                            hasRun.current[el.username] = 1
-                        }
-                    }}>
-                    <button className="group"
-                    onClick={()=> {
-                        navigate('/profile',{state : {el : el}})
-                    }}
-                    > {el.username}
-                    <ToolTip data={'Visit Profile'} />
-                    </button>
-                    </div>
-            )
+    try{
+        if(Array.isArray(users)){
+            userProfile = users?.filter(e => e.username === userName)
         }
-    })
-
-    console.log(users)
-
-    let userProfile = users.filter(e=> e.username === userName)
-
-    console.log(userProfile)
+    }catch(err){
+        console.log(err.message)
+    }
 
     return (
         <>
-            {showUserAlert && <Alert data={'unfetched users'} color={'bg-orange-400'}/>}
-            {showChatAlert && <Alert data={'unfetched chat'} color={'bg-orange-400'}/>}
+            {showUserAlert && <Alert data={'unfetched users'} color={'bg-orange-400'} />}
+            {showChatAlert && <Alert data={'unfetched chat'} color={'bg-orange-400'} />}
             <div className="min-h-screen w- flex flex-row">
                 {toggle ?
                     <>
                         <div className="max-h-screen max-[450px]:w-full min:[450px]:w-1/2 max-[638px]:w-1/2 sm:w-2/5 xl:w-1/3 bg-stone-950 overflow-y-scroll sticky top-0">
                             <div className="h-16 flex items-center justify-between p-2 bg-red-500 shadow-black drop-shadow-2xl border-b border-red-400">
                                 <p className="text-[30px] font-bold text-stone-800" >Connect to </p>
-                                <button className="text-xl font-bold text-stone-800 hover:bg-red-400 h-[30px] w-[30px] rounded-lg flex justify-center items-center" 
-                                onClick={()=> {
-                                    navigate('/profile',{state : {el : userProfile[0]}})
-                                }}
-                                ><FaRegUser /></button>
+                                <div className="flex justify-around flex-row w-1/4">
+                                    <div className="flex group">
+                                        <button className="text-xl font-bold text-stone-800 active:text-stone-500 rounded-lg flex justify-center items-center"
+                                            onClick={() => {
+                                                navigate('/profile', { state: { el: userProfile[0] } })
+                                            }}
+                                        ><FaRegUser /></button>
+                                        <div className="absolute h-fit w-fit p-1 group-hover:opacity-50 opacity-0 bg-black text-white top-10 pointer-events-none rounded-md">profile</div>
+                                    </div>
+                                    <div className="flex group">
+                                        <button onClick={() => {
+                                            sessionStorage.removeItem("username")
+                                            navigate('/')
+                                        }}
+                                            className="text-xl font-bold text-stone-800 active:text-stone-500"><RiLoginBoxLine /></button>
+                                        <div className="absolute h-fit w-fit p-1 group-hover:opacity-50 opacity-0 bg-black text-white right-3 top-10 pointer-events-none rounded-md">login page</div>
+                                    </div>
+                                </div>
                             </div>
-                            {renderUsers}
+                            <RenderUser users={users} userName={userName} showFull={showFull} setRecieverUser={setRecieverUser} setToggle={setToggle}
+                                hasRun={hasRun} setShowChatAlert={setShowChatAlert} setPrintChat={setPrintChat} />
                         </div>
                         {showFull &&
                             <div className="bg-stone-500 min-h-screen min:[450px]:w-1/2 max-[638px]:w-1/2 sm:w-3/5 xl:w-2/3">

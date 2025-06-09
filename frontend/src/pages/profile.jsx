@@ -1,13 +1,15 @@
-import { useLocation } from "react-router-dom"
+import { useLocation,useNavigate } from "react-router-dom"
 import { useState, useEffect, useRef } from "react"
 import moment from "moment"
 import useStore from "../store.jsx"
 import { FaPen } from "react-icons/fa";
+import { MdHome } from "react-icons/md";
 
 export default function Profile() {
 
     let userName = sessionStorage.getItem('username')
     let location = useLocation()
+    let navigate = useNavigate();
     let { el } = location.state
     let { updateProfile, getUser } = useStore();
     let [userValue, setUserValue] = useState(el)
@@ -58,6 +60,11 @@ export default function Profile() {
 
     return (
         <>
+            <button className="absolute top-2 left-2 text-2xl active:text-stone-500"
+            onClick={()=> {
+                navigate('/home')
+            }}
+            ><MdHome /></button>
             <div className="bg-red-500 flex items-center justify-center min-h-screen" >
                 <div className="min-h-[300px]  w-3/4 sm:w-1/2 lg:w-1/3 bg-neutral-900 flex flex-col gap-4 p-5 text-white rounded-md shadow-box-inner-shadow">
                     <div>
@@ -91,7 +98,9 @@ export default function Profile() {
                             : undefined
                         }
                     </div>
-                        {userName != el.username ? undefined : <p className="font-extralight text-sm text-right text-gray-400">word-limit : {bioValue.trim().split(/\s+/).filter(Boolean).length} / 50</p>}
+                        {userName != el.username ? undefined : <p className="font-extralight text-sm text-right text-gray-400">word-limit : 
+                        {bioValue != undefined? bioValue.trim().split(/\s+/)?.filter(Boolean).length : ''} 
+                        / 50</p>}
                     <div>
                         <div className="font-extralight text-sm italic">joined at</div>
                         <h1>{sortedDate}</h1>

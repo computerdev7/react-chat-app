@@ -7,71 +7,77 @@ import dotenv from "dotenv"
 import userRoute from "./routes/userRoutes.js"
 import chat from "./model/chatModel.js"
 import chatRoutes from "./routes/chatRoutes.js"
+import path from "path"
 
 let app = express();
 let httpServer = createServer(app)
 let port = process.env.PORT || 3000;
-
+const __dirname = path.resolve();
 dotenv.config();
 
+
+if (process.env.NODE_ENV === "production") {
+    app.use(express.static(path.join(__dirname, "/frontend/dist")))
+
+    app.get("*", (req, res) => {
+        res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
+    })
+}
 const io = new Server(httpServer, {
     cors: {
-        origin: "http://localhost:5173", 
-        methods: ["GET", "POST","PUT","DELETE"]
+        origin: "http://localhost:5173",
+        methods: ["GET", "POST", "PUT", "DELETE"]
     }
 });
 
-app.set("io",io);
+app.set("io", io);
 app.use(cors());
 app.use(express.json());
 
-// chat functionality using socketio
-
-app.use('/user',userRoute);
-app.use('/chat',chatRoutes)
+app.use('/user', userRoute);
+app.use('/chat', chatRoutes)
 
 let users = {}
 
-io.on('connection',(socket) => {
+io.on('connection', (socket) => {
 
-        console.log("connection",socket.id)
+    console.log("connection", socket.id)
 
-       socket.on('userjoined',(userName) => {
+    socket.on('userjoined', (userName) => {
         users[socket.id] = userName;
-        io.emit('users',users)
-       })
-       
-       socket.on('message',async({to,message})=> {
+        io.emit('users', users)
+    })
 
-           let reciever =  Object.keys(users).find(key => users[key] === to)
-           
-           let sender = users[socket.id]
-        
-      try {
+    socket.on('message', async ({ to, message }) => {
 
-       let data = new chat({chat : message,to : to,from : sender})
+        let reciever = Object.keys(users).find(key => users[key] === to)
 
-       let saveData = await data.save()
+        let sender = users[socket.id]
 
-       io.to(socket.id).emit('message',({from : sender ,to : to, message,_id : saveData._id}))
-       io.to(reciever).emit('message',({from : sender ,to : to, message, _id : saveData._id}))  
+        try {
 
-      }catch(err){
-       console.log(err)
-      }
-        
-       })
+            let data = new chat({ chat: message, to: to, from: sender })
 
-       socket.on("disconnect",()=> {
-        console.log("disconnected",socket.id)
+            let saveData = await data.save()
+
+            io.to(socket.id).emit('message', ({ from: sender, to: to, message, _id: saveData._id }))
+            io.to(reciever).emit('message', ({ from: sender, to: to, message, _id: saveData._id }))
+
+        } catch (err) {
+            console.log(err)
+        }
+    })
+
+    socket.on("disconnect", () => {
+        console.log("disconnected", socket.id)
         delete users[socket.id]
-        io.emit('users',users)
-       })
+        io.emit('users', users)
+    })
 })
 
-httpServer.listen(port, () => { 
+httpServer.listen(port, () => {
     connectToDb();
-    console.log('server running on port',port);
+    console.log('server running on port', port);
 })
 
-export default users
+export default users;
