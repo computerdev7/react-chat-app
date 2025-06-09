@@ -7,7 +7,7 @@ export default function RenderUser({users,userName,showFull,setToggle,setRecieve
     let navigate = useNavigate();
     let {getChat} = useStore();
 
-    let renderUsers = users.map((el, i) => {
+    let renderUsers = users?.map((el, i) => {
         if (el.username != userName) {
             return (
                 <div className=" w-full h-16 text-left p-5 bg-stone-900  text-white  hover:text-red-500  shadow-user-inner-shadow active:bg-stone-700"

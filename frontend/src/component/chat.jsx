@@ -28,7 +28,7 @@ export default function Chat({ printChat, userName, recieverUser, setPrintChat }
         setToggleUpdate(false)
         setToggleAlert(false)
         setPrintChat((prev) => {
-            return prev.map((el) => {
+            return prev?.map((el) => {
                 if (el.id === chatValue) {
                     return { ...el, message: updateChatValue }
                 } else if (el._id === chatValue ) {
@@ -65,7 +65,7 @@ export default function Chat({ printChat, userName, recieverUser, setPrintChat }
         setToggleAlert(false)
     }
 
-    let renderChat = printChat.map((el) => {
+    let renderChat = printChat?.map((el) => {
         return el
     })
 
@@ -84,7 +84,7 @@ export default function Chat({ printChat, userName, recieverUser, setPrintChat }
            }
        })
    
-       arr1.map((el) => {
+       arr1?.map((el) => {
            for (let i = 0; i < arr2.length; i++) {
                if (el._id == arr2[i].id) {
                    arr2 = arr2?.filter(e => el._id != e.id)
@@ -95,7 +95,7 @@ export default function Chat({ printChat, userName, recieverUser, setPrintChat }
 
     let arr3 = [...arr1, ...arr2]
 
-    let newRenderChat = arr3.map((el) => {
+    let newRenderChat = arr3?.map((el) => {
         if (recieverUser == el.to && userName != recieverUser) {
             return (
                 <div className="flex " ref={lastMessage}>

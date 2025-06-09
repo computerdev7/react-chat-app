@@ -12,17 +12,19 @@ import path from "path"
 let app = express();
 let httpServer = createServer(app)
 let port = process.env.PORT || 3000;
-const __dirname = path.resolve();
+let __dirname = path.resolve();
 dotenv.config();
 
 
+console.log(app)
 if (process.env.NODE_ENV === "production") {
     app.use(express.static(path.join(__dirname, "/frontend/dist")))
 
-    app.get("*", (req, res) => {
+    app.get("/*", (req, res) => {
         res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
     })
 }
+
 const io = new Server(httpServer, {
     cors: {
         origin: "http://localhost:5173",
